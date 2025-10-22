@@ -10,12 +10,17 @@ import { JwtStrategy } from './jwt.strategy';
   imports: [
     UsersModule,
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'access_secret',
-      signOptions: { expiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN || '900s' },
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: process.env.JWT_ACCESS_TOKEN_SECRET || 'access_secret',
+        signOptions: {
+          expiresIn: process.env.ACCESS_TOKEN_EXPIRES_IN || '900s',
+        },
+      }),
     }),
   ],
   providers: [AuthService, JwtStrategy],
   controllers: [AuthController],
+  exports: [AuthService], // ✅ so other modules can inject it
 })
 export class AuthModule {}
